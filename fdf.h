@@ -6,7 +6,7 @@
 /*   By: aldferna <aldferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 16:25:59 by aldferna          #+#    #+#             */
-/*   Updated: 2024/12/27 19:43:54 by aldferna         ###   ########.fr       */
+/*   Updated: 2024/12/29 19:33:15 by aldferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,5 +49,8 @@ typedef struct s_fdf
 
 void			fill_matrix(char *file_name, t_fdf *fdf);
 int				ft_atoi_hexa(const char *nptr);
+
+// breseham
+void			matrix_to_lines(t_fdf *fdf);
 
 #endif

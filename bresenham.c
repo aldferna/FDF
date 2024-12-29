@@ -6,83 +6,107 @@
 /*   By: aldferna <aldferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 15:06:04 by aldferna          #+#    #+#             */
-/*   Updated: 2024/12/29 12:32:02 by aldferna         ###   ########.fr       */
+/*   Updated: 2024/12/29 19:32:37 by aldferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-void	slope_greater_one(int *coordenate, int dx, int dy, t_fdf *fdf, int *itera)
+#include "fdf.h"
+
+void swap_coordenates(int **coordenate)
+{
+	int aux;
+	
+	aux = (*coordenate)[X];
+	(*coordenate)[X] = (*coordenate)[X1];
+	(*coordenate)[X1] = aux;
+	aux = (*coordenate)[Y];
+	(*coordenate)[Y] = (*coordenate)[Y1];
+	(*coordenate)[Y1] = aux;
+}
+
+void	draw_line_V(int *coordenate, t_fdf *fdf)
 {
 	int p;
 	int i;
+	int dir;
+	int dx;
+	int dy;
 
+	if (coordenate[Y] > coordenate[Y1])
+		swap_coordenates(&coordenate);
+	dx = coordenate[X1] - coordenate[X];
+	dy = coordenate[Y1] - coordenate[Y];
+	if (dx < 0)
+		dir = -1;
+	else
+		dir = 1;
+	dx *= dir;
 	i = 0;
-	p = 2*dy - dx;
-	while (i < dy)
+	p = 2*dx - dy;
+	while (i < abs(dy))
 	{
 		coordenate[Y] += 1;
 		if (p >= 0)
 		{
-			coordenate[X] += 1;
-			p = p + 2*dx - 2*dy;
+			coordenate[X] += dir;
+			p = p - 2*dy;
 		}
-		else
-			p = p + 2*dx;
-		// printf("X: %d Y: %d\n", coordenate[X], coordenate[Y]);
-		// printf("%u\n", fdf->matrix[coordenate[X]][coordenate[Y]].color);
-		mlx_put_pixel(fdf->img, coordenate[X], coordenate[Y], fdf->matrix[itera[1]][itera[0]].color);
-		//coordenate[Y] += 1;
+		p = p + 2*dx;      
+		mlx_put_pixel(fdf->img, coordenate[X], coordenate[Y], fdf->matrix[coordenate[Y]][coordenate[X]].color);
 		i++;
 	}
 }
 
-void	slope_less_one(int *coordenate, int dx, int dy, t_fdf *fdf, int *itera)
+void	draw_line_H(int *coordenate, t_fdf *fdf)
 {
 	int p;
 	int i;
+	int dir;
+	int dx;
+	int dy;
 
+	if (coordenate[X] > coordenate[X1])
+		swap_coordenates(&coordenate);
+	dx = coordenate[X1] - coordenate[X];
+	dy = coordenate[Y1] - coordenate[Y];
+	if (dy < 0)
+		dir = -1;
+	else
+		dir = 1;
+	dy *= dir;
 	i = 0;
 	p = 2*dy - dx;
-	while (i < dx)
+	while (i < abs(dx))
 	{
 		coordenate[X] += 1;
 		if (p >= 0)
 		{
-			coordenate[Y] += 1;
-			p = p + 2*dy - 2*dx;
+			coordenate[Y] += dir;
+			p = p - 2*dx;
 		}
-		else
-			p = p + 2*dy;              
-		//printf("%u\n", fdf->matrix[coordenate[Y]][coordenate[X]].color);  //multiplicar sumar aqui (poner slope -)
-		//printf("%i %i\n", coordenate[Y], coordenate[X]);
-		mlx_put_pixel(fdf->img, coordenate[X], coordenate[Y], fdf->matrix[itera[1]][itera[0]].color);
-		//coordenate[X] += 1;
+		p = p + 2*dy;              
+		mlx_put_pixel(fdf->img, coordenate[X], coordenate[Y], fdf->matrix[coordenate[Y]][coordenate[X]].color);
 		i++;
 	}
 }
 
-void	what_slope(int *coordenate, t_fdf *fdf, char line, int *itera)
+void	draw_line(int *coordenate, t_fdf *fdf)
 {
-	int dx = 0;
-	int dy = 0;
+	int dx;
+	int dy;
 
-	if (line == 'h')
-	{
-		dx = coordenate[X1] - coordenate[X];
-		dy = coordenate[Y1] - coordenate[Y];
-	}
-	else if (line == 'v')
-	{
-		dx = coordenate[X2] - coordenate[X];
-		dy = coordenate[Y2] - coordenate[Y];
-	}
-	if (dx != 0)
-	{
-		if (dy > dx)
-			slope_greater_one(coordenate, dx, dy, fdf, itera);
-		else if (dx > dy)
-			slope_less_one(coordenate, dx, dy, fdf, itera);
-		//si dx = dy?
-	}
+	dx = coordenate[X1] - coordenate[X];
+	dy = coordenate[Y1] - coordenate[Y];
+	// if (dx != 0)
+	// {
+		if (abs(dx) > abs(dy))
+			draw_line_H(coordenate, fdf);
+		else
+		{
+			printf("hola1\n");
+			draw_line_V(coordenate, fdf);
+		}
+	//}
 }
 
 void matrix_to_lines(t_fdf *fdf)
@@ -90,8 +114,7 @@ void matrix_to_lines(t_fdf *fdf)
 	int y;
 	int x;
 	t_node **matrix;
-	int coordenate[6];
-	int itera[2];
+	int coordenate[4];
 
 	matrix = fdf->matrix;
 	y = 0;
@@ -101,29 +124,86 @@ void matrix_to_lines(t_fdf *fdf)
 		x = 0;
 		while (x < fdf->width)
 		{
-			coordenate[X] = matrix[y][x].x * zoom;
-			coordenate[Y] = matrix[y][x].y * zoom;
 			if (x < fdf->width - 1)
 			{
-				//printf("x: %i y: %i  -  x1: %i y1: %i  -  x2: %i y2: %i\n", coordenate[X], coordenate[Y], coordenate[X1], coordenate[Y1], coordenate[X2], coordenate[Y2]); //raro y
-				itera[0] = x;
-				itera[1] = y;
-				coordenate[X1] = matrix[y][x + 1].x * zoom;
-				coordenate[Y1] = matrix[y][x + 1].y * zoom;
-				what_slope(coordenate, fdf, 'h', itera);
+				coordenate[X] = matrix[y][x].x;
+				coordenate[Y] = matrix[y][x].y;
+				coordenate[X1] = matrix[y][x + 1].x;
+				coordenate[Y1] = matrix[y][x + 1].y;
+				draw_line(coordenate, fdf);
 			}
 			if (y < fdf->height - 1)
-			{				
-				//printf("height-1: %i - y:%i\n", fdf->height - 1, y); 
-				//printf("x:%i, y:%i - x2:%i, y2:%i\n", matrix[y][x].x, matrix[y][x].y, matrix[y + 1][x].x, matrix[y + 1][x].y); 
-				itera[0] = x;
-				itera[1] = y;
-				coordenate[X2] = matrix[y + 1][x].x * zoom;
-				coordenate[Y2] = matrix[y + 1][x].y * zoom;
-				what_slope(coordenate, fdf, 'v', itera);
+			{
+				coordenate[X] = matrix[y][x].x;
+				coordenate[Y] = matrix[y][x].y;	
+				coordenate[X1] = matrix[y + 1][x].x;
+				coordenate[Y1] = matrix[y + 1][x].y;
+				draw_line(coordenate, fdf);
 			}
 			x++;
 		}
 		y++;
 	}
 }
+
+
+/*void test_draw_lines(t_fdf *fdf, int x, int y, int length)
+{
+    int coordenate[4];
+
+    // Norte
+    coordenate[X] = x;
+    coordenate[Y] = y;
+    coordenate[X1] = x;
+    coordenate[Y1] = y - length;
+    draw_line(coordenate, fdf);
+
+    // Sur
+    coordenate[X] = x;
+    coordenate[Y] = y;
+    coordenate[X1] = x;
+    coordenate[Y1] = y + length;
+    draw_line(coordenate, fdf);
+
+    // Este
+    coordenate[X] = x;
+    coordenate[Y] = y;
+    coordenate[X1] = x + length;
+    coordenate[Y1] = y;
+    draw_line(coordenate, fdf);
+
+    // Oeste
+    coordenate[X] = x;
+    coordenate[Y] = y;
+    coordenate[X1] = x - length;
+    coordenate[Y1] = y;
+    draw_line(coordenate, fdf);
+
+    // Noreste
+    coordenate[X] = x;
+    coordenate[Y] = y;
+    coordenate[X1] = x + length;
+    coordenate[Y1] = y - length + 25;
+    draw_line(coordenate, fdf);
+
+    // Noroeste
+    coordenate[X] = x;
+    coordenate[Y] = y;
+    coordenate[X1] = x - length;
+    coordenate[Y1] = y - length + 25;
+    draw_line(coordenate, fdf);
+
+    // Sureste
+    coordenate[X] = x;
+    coordenate[Y] = y;
+    coordenate[X1] = x + length - 40;
+    coordenate[Y1] = y + length;
+    draw_line(coordenate, fdf);
+
+    // Suroeste
+    coordenate[X] = x;
+    coordenate[Y] = y;
+    coordenate[X1] = x - length + 25;
+    coordenate[Y1] = y + length;
+    draw_line(coordenate, fdf);
+}*/
