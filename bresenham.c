@@ -6,7 +6,7 @@
 /*   By: aldferna <aldferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 15:06:04 by aldferna          #+#    #+#             */
-/*   Updated: 2024/12/29 19:32:37 by aldferna         ###   ########.fr       */
+/*   Updated: 2024/12/30 19:10:49 by aldferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void swap_coordenates(int **coordenate)
 	(*coordenate)[Y1] = aux;
 }
 
-void	draw_line_V(int *coordenate, t_fdf *fdf)
+void	draw_line_V(int *coordenate, t_fdf *fdf, int *iter)
 {
 	int p;
 	int i;
@@ -51,13 +51,15 @@ void	draw_line_V(int *coordenate, t_fdf *fdf)
 			coordenate[X] += dir;
 			p = p - 2*dy;
 		}
-		p = p + 2*dx;      
-		mlx_put_pixel(fdf->img, coordenate[X], coordenate[Y], fdf->matrix[coordenate[Y]][coordenate[X]].color);
+		p = p + 2*dx;
+		//printf("%u\n", fdf->matrix[iter[1]][iter[0]].color);
+		//printf("%i\n", fdf->matrix[iter[1]][iter[0]].color);
+		mlx_put_pixel(fdf->img, coordenate[X], coordenate[Y], fdf->matrix[iter[1]][iter[0]].color);
 		i++;
 	}
 }
 
-void	draw_line_H(int *coordenate, t_fdf *fdf)
+void	draw_line_H(int *coordenate, t_fdf *fdf, int *iter)
 {
 	int p;
 	int i;
@@ -85,12 +87,12 @@ void	draw_line_H(int *coordenate, t_fdf *fdf)
 			p = p - 2*dx;
 		}
 		p = p + 2*dy;              
-		mlx_put_pixel(fdf->img, coordenate[X], coordenate[Y], fdf->matrix[coordenate[Y]][coordenate[X]].color);
+		mlx_put_pixel(fdf->img, coordenate[X], coordenate[Y], fdf->matrix[iter[1]][iter[0]].color);
 		i++;
 	}
 }
 
-void	draw_line(int *coordenate, t_fdf *fdf)
+void	draw_line(int *coordenate, t_fdf *fdf, int *iter)
 {
 	int dx;
 	int dy;
@@ -100,12 +102,9 @@ void	draw_line(int *coordenate, t_fdf *fdf)
 	// if (dx != 0)
 	// {
 		if (abs(dx) > abs(dy))
-			draw_line_H(coordenate, fdf);
+			draw_line_H(coordenate, fdf, iter);
 		else
-		{
-			printf("hola1\n");
-			draw_line_V(coordenate, fdf);
-		}
+			draw_line_V(coordenate, fdf, iter);
 	//}
 }
 
@@ -115,6 +114,7 @@ void matrix_to_lines(t_fdf *fdf)
 	int x;
 	t_node **matrix;
 	int coordenate[4];
+	int iter[2];
 
 	matrix = fdf->matrix;
 	y = 0;
@@ -124,21 +124,23 @@ void matrix_to_lines(t_fdf *fdf)
 		x = 0;
 		while (x < fdf->width)
 		{
+			iter[0] = x;
+			iter[1] = y;
 			if (x < fdf->width - 1)
 			{
-				coordenate[X] = matrix[y][x].x;
-				coordenate[Y] = matrix[y][x].y;
-				coordenate[X1] = matrix[y][x + 1].x;
-				coordenate[Y1] = matrix[y][x + 1].y;
-				draw_line(coordenate, fdf);
+				coordenate[X] = matrix[y][x].x_iso;
+				coordenate[Y] = matrix[y][x].y_iso;
+				coordenate[X1] = matrix[y][x + 1].x_iso;
+				coordenate[Y1] = matrix[y][x + 1].y_iso;
+				draw_line(coordenate, fdf, iter);
 			}
 			if (y < fdf->height - 1)
 			{
-				coordenate[X] = matrix[y][x].x;
-				coordenate[Y] = matrix[y][x].y;	
-				coordenate[X1] = matrix[y + 1][x].x;
-				coordenate[Y1] = matrix[y + 1][x].y;
-				draw_line(coordenate, fdf);
+				coordenate[X] = matrix[y][x].x_iso;
+				coordenate[Y] = matrix[y][x].y_iso;	
+				coordenate[X1] = matrix[y + 1][x].x_iso;
+				coordenate[Y1] = matrix[y + 1][x].y_iso;
+				draw_line(coordenate, fdf, iter);
 			}
 			x++;
 		}

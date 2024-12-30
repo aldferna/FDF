@@ -1,14 +1,14 @@
 MAKEFLAGS	= --no-print-directory --silent
 NAME = fdf
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g3
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g3 #quitar g3 al entregar
 RM = rm -rf
 
 INCLUDE = -I libs/MLX42/include -I libs/libft -I.
 
 MLXFLAGS = libs/MLX42/build/libmlx42.a -ldl -lglfw -pthread -lm
 
-SRC = fdf.c ft_atoi_hexa.c parsing.c\
+SRC = fdf.c ft_atoi_hexa.c parsing.c bresenham.c\
 
 OBJ = $(SRC:.c=.o)
 

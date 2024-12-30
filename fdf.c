@@ -6,7 +6,7 @@
 /*   By: aldferna <aldferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 16:28:00 by aldferna          #+#    #+#             */
-/*   Updated: 2024/12/29 19:38:09 by aldferna         ###   ########.fr       */
+/*   Updated: 2024/12/30 19:32:17 by aldferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,32 @@ void	close_esc(void *param) // param se pasa en el bucle de eventos de MLX
 	mlx_t *mlx;
 
 	mlx = param;
-	if (mlx_is_key_down(mlx, MLX_KEY_ESCAPE))
+	if (mlx_is_key_down(mlx, MLX_KEY_ESCAPE)) // y para resto de teclas
 		mlx_close_window(mlx);
 }
 
+void	isometric(t_fdf *fdf)
+{
+	int			x;
+	int			y;
+	int			z;
+	const int	posx = fdf->cam_x;
+	const int	posy = fdf->cam_y;
+
+	y = 0;
+	while (y < fdf->height)
+	{
+		x = 0;
+		while (x < fdf->width)
+		{
+			z = fdf->matrix[y][x].z;
+			fdf->matrix[y][x].x_iso = posx + fdf->zoom * (y - x) * cos(60);
+			fdf->matrix[y][x].y_iso = posy - fdf->zoom * (x + y) * sin(60) - z;
+			x++;
+		}
+		y++;
+	}
+}
 
 int	main(int argc, char **argv)
 {
@@ -30,23 +52,30 @@ int	main(int argc, char **argv)
 	/*if (argc != 2)
 		return(1);*/
 	fill_matrix(argv[1], &fdf);
-	fdf.mlx = mlx_init(1920, 1080, "FDF", true);
+	fdf.mlx = mlx_init(fdf.win_width, fdf.win_height, "FDF", true);
 	if (!fdf.mlx)
 		return (1);
-	fdf.img = mlx_new_image(fdf.mlx, 500, 500);
+	fdf.img = mlx_new_image(fdf.mlx, fdf.win_width, fdf.win_height);
 	if (!fdf.img || (mlx_image_to_window(fdf.mlx, fdf.img, 0, 0) < 0))
 		return (1);
+
+	isometric(&fdf);
 	matrix_to_lines(&fdf);
-	//test_draw_lines(&fdf, 100, 100, 50);
+	// test_draw_lines(&fdf, 100, 100, 50);
 	mlx_loop_hook(fdf.mlx, &close_esc, fdf.mlx);
 	mlx_loop(fdf.mlx);
 	mlx_terminate(fdf.mlx);
-	exit (0); //sin liberar memoria
+	exit(0); // sin liberar memoria
 }
 
+// el primer calloc en fill_matrix
+// poner algun limites al dibujar---q no se salga fuera	-antes de dibujar comprobar --pero con pyramid.fdf si¿xq?
 
-//con julia height 0??
-//raro con mapas con numeros negativos- ¿falta slope?¿guardo el - al parsear?
-//definir zoom y ponerlo en el medio
-//las ultimas lineas se pintan bien?
-//poner algun limites al dibujar---q no se salga fuera
+//z peque_   10-2   basictest   pentenegpos
+//seg faul read memory access_   50-4   pylone
+//seg faul write memory access_    100-6
+//no pinta coordenadas con color_    elem-col
+//height 0 (como si estuviera vacio)_    elem-fract   julia   pyra  t1   t2
+//overflow_    mars
+//sin alturas_   pyramide
+

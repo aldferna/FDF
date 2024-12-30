@@ -6,7 +6,7 @@
 /*   By: aldferna <aldferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/27 11:51:50 by aldferna          #+#    #+#             */
-/*   Updated: 2024/12/29 16:25:22 by aldferna         ###   ########.fr       */
+/*   Updated: 2024/12/30 19:15:52 by aldferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,10 @@ int	count_width(char *line)
 	count = 0;
 	while (line[i] != '\0')
 	{
-		if (line[i] >= '0' && line[i] <= '9')
+		if ((line[i] >= '0' && line[i] <= '9') || line[i] == '-')
 			count++;
+		if (line[i] == '-')
+			i++;
 		i++;
 		while (line[i] != '\0' && line[i - 1] != ' ')
 			i++;
@@ -32,13 +34,14 @@ int	count_width(char *line)
 
 char	*fill_nodes(t_fdf *fdf, char **line, int x, int y)
 {
-	if (**line >= '0' && **line <= '9')
+	if ((**line >= '0' && **line <= '9') || **line == '-')
 	{
-		//printf("aqui: %s\n", *line);
 		fdf->matrix[y][x].x = x;
 		fdf->matrix[y][x].y = y;
 		fdf->matrix[y][x].z = ft_atoi(*line);
+		//printf("posicion %i - z: %i\n", x, fdf->matrix[y][x].z);
 		fdf->matrix[y][x].color = 0xFF0000FF;
+		(*line)++;
 	}
 	while (**line >= '0' && **line <= '9')
 		(*line)++;
@@ -80,7 +83,12 @@ void fill_matrix(char *file_name, t_fdf *fdf)
 	int		y;
 
 	ft_memset(fdf, 0, sizeof(t_fdf));
-	fdf->width = 2147483647;
+	fdf->width = 2147483647;         //llevar alguna linea al main
+	fdf->win_width = 1920;
+	fdf->win_height = 1080;
+	fdf->zoom = fdf->win_height / 25;
+	fdf->cam_x = fdf->win_width / 2;
+	fdf->cam_y = fdf->win_height / 3;
 	fd = open(file_name, O_RDONLY);
 	y = 0;
 	fdf->matrix = ft_calloc(100, sizeof(t_node *));
@@ -93,7 +101,6 @@ void fill_matrix(char *file_name, t_fdf *fdf)
 			return (free(line));
 		fdf->height++;
 		process_line(fdf, line, y);
-		// printf("widht: %i\n", fdf.width);
 		y++;
 		free(line);
 	}
