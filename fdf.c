@@ -6,7 +6,7 @@
 /*   By: aldferna <aldferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 16:28:00 by aldferna          #+#    #+#             */
-/*   Updated: 2024/12/30 19:32:17 by aldferna         ###   ########.fr       */
+/*   Updated: 2025/01/04 17:23:55 by aldferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int	main(int argc, char **argv)
 
 	isometric(&fdf);
 	matrix_to_lines(&fdf);
-	// test_draw_lines(&fdf, 100, 100, 50);
+	//test_draw_lines(&fdf, 100, 100, 50);
 	mlx_loop_hook(fdf.mlx, &close_esc, fdf.mlx);
 	mlx_loop(fdf.mlx);
 	mlx_terminate(fdf.mlx);
@@ -79,3 +79,6 @@ int	main(int argc, char **argv)
 //overflow_    mars
 //sin alturas_   pyramide
 
+//esta formula da segment fault y no deberia
+// fdf->matrix[y][x].x_iso = posx + fdf->zoom * (x - y) * cos(0.523599);
+// fdf->matrix[y][x].y_iso = posy - fdf->zoom * (x + y) * sin(0.523599) - z;
