@@ -6,7 +6,7 @@
 /*   By: aldferna <aldferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 16:28:00 by aldferna          #+#    #+#             */
-/*   Updated: 2025/01/04 17:23:55 by aldferna         ###   ########.fr       */
+/*   Updated: 2025/01/13 20:32:51 by aldferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,11 @@ void	isometric(t_fdf *fdf)
 		x = 0;
 		while (x < fdf->width)
 		{
-			z = fdf->matrix[y][x].z;
-			fdf->matrix[y][x].x_iso = posx + fdf->zoom * (y - x) * cos(60);
-			fdf->matrix[y][x].y_iso = posy - fdf->zoom * (x + y) * sin(60) - z;
+			z = fdf->matrix[y][x].z * 2;
+			fdf->matrix[y][x].x_iso = posx + (fdf->zoom * (x - y) * cos(0.523599));
+			fdf->matrix[y][x].y_iso = posy + (fdf->zoom * (x + y) * sin(0.523599) - z);
+			//fdf->matrix[y][x].x_iso = posx + fdf->zoom * (y - x) * cos(60);
+			//fdf->matrix[y][x].y_iso = posy - fdf->zoom * (x + y) * sin(60) - z;
 			x++;
 		}
 		y++;
@@ -52,7 +54,7 @@ int	main(int argc, char **argv)
 	/*if (argc != 2)
 		return(1);*/
 	fill_matrix(argv[1], &fdf);
-	fdf.mlx = mlx_init(fdf.win_width, fdf.win_height, "FDF", true);
+	fdf.mlx = mlx_init(fdf.win_width, fdf.win_height, "FDF", false);
 	if (!fdf.mlx)
 		return (1);
 	fdf.img = mlx_new_image(fdf.mlx, fdf.win_width, fdf.win_height);
@@ -68,17 +70,22 @@ int	main(int argc, char **argv)
 	exit(0); // sin liberar memoria
 }
 
-// el primer calloc en fill_matrix
-// poner algun limites al dibujar---q no se salga fuera	-antes de dibujar comprobar --pero con pyramid.fdf si¿xq?
+// segun tamano del mapa ajustar zoom
 
-//z peque_   10-2   basictest   pentenegpos
-//seg faul read memory access_   50-4   pylone
-//seg faul write memory access_    100-6
+//seg faul read memory access --> incompleto_   50-4   pylone
+//seg faul write memory access --> incompleto_    100-6
 //no pinta coordenadas con color_    elem-col
 //height 0 (como si estuviera vacio)_    elem-fract   julia   pyra  t1   t2
 //overflow_    mars
 //sin alturas_   pyramide
 
+
+
+
+//ok:
 //esta formula da segment fault y no deberia
 // fdf->matrix[y][x].x_iso = posx + fdf->zoom * (x - y) * cos(0.523599);
 // fdf->matrix[y][x].y_iso = posy - fdf->zoom * (x + y) * sin(0.523599) - z;
+
+// poner algun limites al dibujar---q no se salga fuera	-antes de dibujar comprobar
+// el primer calloc en fill_matrix

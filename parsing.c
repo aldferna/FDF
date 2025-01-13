@@ -6,7 +6,7 @@
 /*   By: aldferna <aldferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/27 11:51:50 by aldferna          #+#    #+#             */
-/*   Updated: 2024/12/30 19:15:52 by aldferna         ###   ########.fr       */
+/*   Updated: 2025/01/13 21:29:43 by aldferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,15 +32,17 @@ int	count_width(char *line)
 	return (count);
 }
 
-char	*fill_nodes(t_fdf *fdf, char **line, int x, int y)
+char	*fill_node(t_fdf *fdf, char **line, int x, int y)
 {
+	while (**line == ' ' || **line == '\t')
+		(*line)++;
 	if ((**line >= '0' && **line <= '9') || **line == '-')
 	{
 		fdf->matrix[y][x].x = x;
 		fdf->matrix[y][x].y = y;
 		fdf->matrix[y][x].z = ft_atoi(*line);
 		//printf("posicion %i - z: %i\n", x, fdf->matrix[y][x].z);
-		fdf->matrix[y][x].color = 0xFF0000FF;
+		fdf->matrix[y][x].color = 0xFF0FF0FF;
 		(*line)++;
 	}
 	while (**line >= '0' && **line <= '9')
@@ -48,7 +50,7 @@ char	*fill_nodes(t_fdf *fdf, char **line, int x, int y)
 	if (**line == ',')
 	{
 		(*line)++;
-		fdf->matrix[y][x].color = ft_atoi_hexa(*line);
+		fdf->matrix[y][x].color = ((ft_atoi_hexa(*line) << 8) | 0xFF);   //anadir alfa
 	}
 	while (**line != '\0' && **line != ' ' && **line != '\t')
 		(*line)++;
@@ -71,9 +73,27 @@ void	process_line(t_fdf *fdf, char *line, int y)
 	line_aux = line;
 	while (x < fdf->width)
 	{
-		line_aux = fill_nodes(fdf, &line_aux, x, y);
+		line_aux = fill_node(fdf, &line_aux, x, y);
 		x++;
 	}
+}
+
+void resize_matrix(t_fdf *fdf, int *space)
+{
+	t_node **aux_matrix;
+	int y;
+	
+	aux_matrix = ft_calloc((*space) * 2, sizeof(t_node *));
+	y = 0;
+	while (y < (*space))
+	{
+		aux_matrix[y] = fdf->matrix[y]; //sin realloc, guardar ptr a lo anterior, no el contenido
+		y++;
+	}
+	(*space) *= 2;
+	free(fdf->matrix);
+	fdf->matrix = aux_matrix;
+	write(1, "loading...\n", 12);
 }
 
 void fill_matrix(char *file_name, t_fdf *fdf)
@@ -81,28 +101,41 @@ void fill_matrix(char *file_name, t_fdf *fdf)
 	int		fd;
 	char	*line;
 	int		y;
+	int		space;
 
 	ft_memset(fdf, 0, sizeof(t_fdf));
 	fdf->width = 2147483647;         //llevar alguna linea al main
 	fdf->win_width = 1920;
 	fdf->win_height = 1080;
-	fdf->zoom = fdf->win_height / 25;
 	fdf->cam_x = fdf->win_width / 2;
-	fdf->cam_y = fdf->win_height / 3;
+	fdf->cam_y = fdf->win_height / 20;
 	fd = open(file_name, O_RDONLY);
+	if (fd == -1)
+	{
+		write(1, "error\n", 7);
+		exit(0);
+	}
 	y = 0;
-	fdf->matrix = ft_calloc(100, sizeof(t_node *));
+	space = 100;
+	fdf->matrix = ft_calloc(space, sizeof(t_node *));
 	while (1)
 	{
 		line = get_next_line(fd);
 		if (line == NULL)
 			break ;
-		if (line[0] == '\n' || line[0] == ' ')
+		if (line[0] == '\n')
 			return (free(line));
 		fdf->height++;
+		if (y == space)
+			resize_matrix(fdf, &space);
 		process_line(fdf, line, y);
 		y++;
 		free(line);
 	}
 	close(fd);
+	if (fdf->height > fdf->width)
+		fdf->zoom = 1000/fdf->height;
+	else
+		fdf->zoom = 1000/fdf->width;
+	printf("height %i  zoom %i\n", fdf->height, fdf->zoom);
 }

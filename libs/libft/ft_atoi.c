@@ -6,11 +6,12 @@
 /*   By: aldferna <aldferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 15:20:15 by aldferna          #+#    #+#             */
-/*   Updated: 2024/10/02 15:45:13 by aldferna         ###   ########.fr       */
+/*   Updated: 2024/12/30 18:21:52 by aldferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#include <stdio.h>
 
 int	ft_atoi(const char *nptr)
 {
@@ -36,5 +37,6 @@ int	ft_atoi(const char *nptr)
 		number = number * 10 + (nptr[i] - 48);
 		i++;
 	}
+	//printf("zen atoi: %i\n", sign*number);
 	return (sign * number);
 }
