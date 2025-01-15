@@ -6,53 +6,55 @@
 /*   By: aldferna <aldferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 16:28:00 by aldferna          #+#    #+#             */
-/*   Updated: 2025/01/13 20:32:51 by aldferna         ###   ########.fr       */
+/*   Updated: 2025/01/15 19:50:25 by aldferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-void	close_esc(void *param) // param se pasa en el bucle de eventos de MLX
+void	key_hook(void *param)
 {
-	mlx_t *mlx;
+	t_fdf	*fdf;
 
-	mlx = param;
-	if (mlx_is_key_down(mlx, MLX_KEY_ESCAPE)) // y para resto de teclas
-		mlx_close_window(mlx);
+	fdf = (t_fdf *)param;
+	if (mlx_is_key_down(fdf->mlx, MLX_KEY_ESCAPE))
+		mlx_close_window(fdf->mlx);
+	if (mlx_is_key_down(fdf->mlx, MLX_KEY_UP))
+		fdf->cam_y += 5;
+	if (mlx_is_key_down(fdf->mlx, MLX_KEY_DOWN))
+		fdf->cam_y -= 5;
+	if (mlx_is_key_down(fdf->mlx, MLX_KEY_LEFT))
+		fdf->cam_x += 5;
+	if (mlx_is_key_down(fdf->mlx, MLX_KEY_RIGHT))
+		fdf->cam_x -= 5;
+	if (mlx_is_key_down(fdf->mlx, MLX_KEY_0))
+		fdf->change_z -= 5;
+	if (mlx_is_key_down(fdf->mlx, MLX_KEY_1))
+		fdf->change_z += 5;
+	isometric(fdf);
+	matrix_to_lines(fdf);
 }
 
-void	isometric(t_fdf *fdf)
+void	zoom_hook(double xdelta, double ydelta, void *param)
 {
-	int			x;
-	int			y;
-	int			z;
-	const int	posx = fdf->cam_x;
-	const int	posy = fdf->cam_y;
+	(void)xdelta;
+	t_fdf *fdf;
 
-	y = 0;
-	while (y < fdf->height)
-	{
-		x = 0;
-		while (x < fdf->width)
-		{
-			z = fdf->matrix[y][x].z * 2;
-			fdf->matrix[y][x].x_iso = posx + (fdf->zoom * (x - y) * cos(0.523599));
-			fdf->matrix[y][x].y_iso = posy + (fdf->zoom * (x + y) * sin(0.523599) - z);
-			//fdf->matrix[y][x].x_iso = posx + fdf->zoom * (y - x) * cos(60);
-			//fdf->matrix[y][x].y_iso = posy - fdf->zoom * (x + y) * sin(60) - z;
-			x++;
-		}
-		y++;
-	}
+	fdf = (t_fdf *)param;
+	if (ydelta > 0)
+		fdf->zoom *= 1.1;
+	else if (ydelta < 0)
+		fdf->zoom *= 0.9;
+	isometric(fdf);
+	matrix_to_lines(fdf);
 }
 
 int	main(int argc, char **argv)
 {
 	t_fdf	fdf;
 
-	(void)argc;
-	/*if (argc != 2)
-		return(1);*/
+	if (argc != 2)
+		return (1);
 	fill_matrix(argv[1], &fdf);
 	fdf.mlx = mlx_init(fdf.win_width, fdf.win_height, "FDF", false);
 	if (!fdf.mlx)
@@ -60,32 +62,24 @@ int	main(int argc, char **argv)
 	fdf.img = mlx_new_image(fdf.mlx, fdf.win_width, fdf.win_height);
 	if (!fdf.img || (mlx_image_to_window(fdf.mlx, fdf.img, 0, 0) < 0))
 		return (1);
-
 	isometric(&fdf);
 	matrix_to_lines(&fdf);
-	//test_draw_lines(&fdf, 100, 100, 50);
-	mlx_loop_hook(fdf.mlx, &close_esc, fdf.mlx);
+	mlx_scroll_hook(fdf.mlx, &zoom_hook, &fdf);
+	mlx_loop_hook(fdf.mlx, &key_hook, &fdf);
 	mlx_loop(fdf.mlx);
 	mlx_terminate(fdf.mlx);
-	exit(0); // sin liberar memoria
+	exit(0);
 }
 
-// segun tamano del mapa ajustar zoom
-
-//seg faul read memory access --> incompleto_   50-4   pylone
-//seg faul write memory access --> incompleto_    100-6
-//no pinta coordenadas con color_    elem-col
-//height 0 (como si estuviera vacio)_    elem-fract   julia   pyra  t1   t2
-//overflow_    mars
-//sin alturas_   pyramide
+//no pintar linea si los dos puntos fuera
+//no pintar
 
 
-
-
-//ok:
-//esta formula da segment fault y no deberia
+// ok:
+// esta formula da segment fault y no deberia
 // fdf->matrix[y][x].x_iso = posx + fdf->zoom * (x - y) * cos(0.523599);
 // fdf->matrix[y][x].y_iso = posy - fdf->zoom * (x + y) * sin(0.523599) - z;
 
 // poner algun limites al dibujar---q no se salga fuera	-antes de dibujar comprobar
-// el primer calloc en fill_matrix
+// el primer calloc en fill_matrix; redimensionar
+// segun tamano del mapa ajustar zoom

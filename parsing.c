@@ -6,7 +6,7 @@
 /*   By: aldferna <aldferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/27 11:51:50 by aldferna          #+#    #+#             */
-/*   Updated: 2025/01/13 21:29:43 by aldferna         ###   ########.fr       */
+/*   Updated: 2025/01/15 18:31:57 by aldferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ char	*fill_node(t_fdf *fdf, char **line, int x, int y)
 		fdf->matrix[y][x].x = x;
 		fdf->matrix[y][x].y = y;
 		fdf->matrix[y][x].z = ft_atoi(*line);
-		//printf("posicion %i - z: %i\n", x, fdf->matrix[y][x].z);
 		fdf->matrix[y][x].color = 0xFF0FF0FF;
 		(*line)++;
 	}
@@ -50,7 +49,7 @@ char	*fill_node(t_fdf *fdf, char **line, int x, int y)
 	if (**line == ',')
 	{
 		(*line)++;
-		fdf->matrix[y][x].color = ((ft_atoi_hexa(*line) << 8) | 0xFF);   //anadir alfa
+		fdf->matrix[y][x].color = ((ft_atoi_hexa(*line) << 8) | 0xFF);
 	}
 	while (**line != '\0' && **line != ' ' && **line != '\t')
 		(*line)++;
@@ -82,12 +81,12 @@ void resize_matrix(t_fdf *fdf, int *space)
 {
 	t_node **aux_matrix;
 	int y;
-	
+
 	aux_matrix = ft_calloc((*space) * 2, sizeof(t_node *));
 	y = 0;
 	while (y < (*space))
 	{
-		aux_matrix[y] = fdf->matrix[y]; //sin realloc, guardar ptr a lo anterior, no el contenido
+		aux_matrix[y] = fdf->matrix[y];
 		y++;
 	}
 	(*space) *= 2;
@@ -103,18 +102,8 @@ void fill_matrix(char *file_name, t_fdf *fdf)
 	int		y;
 	int		space;
 
-	ft_memset(fdf, 0, sizeof(t_fdf));
-	fdf->width = 2147483647;         //llevar alguna linea al main
-	fdf->win_width = 1920;
-	fdf->win_height = 1080;
-	fdf->cam_x = fdf->win_width / 2;
-	fdf->cam_y = fdf->win_height / 20;
-	fd = open(file_name, O_RDONLY);
-	if (fd == -1)
-	{
-		write(1, "error\n", 7);
-		exit(0);
-	}
+	fdf->width = 2147483647;
+	fd = fd_open(file_name);	
 	y = 0;
 	space = 100;
 	fdf->matrix = ft_calloc(space, sizeof(t_node *));
@@ -122,9 +111,7 @@ void fill_matrix(char *file_name, t_fdf *fdf)
 	{
 		line = get_next_line(fd);
 		if (line == NULL)
-			break ;
-		if (line[0] == '\n')
-			return (free(line));
+			break;
 		fdf->height++;
 		if (y == space)
 			resize_matrix(fdf, &space);
@@ -133,9 +120,5 @@ void fill_matrix(char *file_name, t_fdf *fdf)
 		free(line);
 	}
 	close(fd);
-	if (fdf->height > fdf->width)
-		fdf->zoom = 1000/fdf->height;
-	else
-		fdf->zoom = 1000/fdf->width;
-	printf("height %i  zoom %i\n", fdf->height, fdf->zoom);
+	init_fdf(fdf);
 }

@@ -6,7 +6,7 @@
 /*   By: aldferna <aldferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 16:25:59 by aldferna          #+#    #+#             */
-/*   Updated: 2024/12/30 14:52:25 by aldferna         ###   ########.fr       */
+/*   Updated: 2025/01/15 19:54:47 by aldferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,17 +43,23 @@ typedef struct s_fdf
 	t_node		**matrix;
 	int			width;
 	int			height;
-	int			win_width;  //1920
-	int			win_height; //1080
-	int			zoom; //fdf->win_height / 100
+	int			win_width;
+	int			win_height;
+	float		zoom;
 	int			cam_x;
 	int			cam_y;
+	int			change_z;
 }				t_fdf;
 
 void			fill_matrix(char *file_name, t_fdf *fdf);
 int				ft_atoi_hexa(const char *nptr);
 
+int				fd_open(char *file_name);
+void			init_fdf(t_fdf *fdf);
+
 // bresenham
 void			matrix_to_lines(t_fdf *fdf);
+void			isometric(t_fdf *fdf);
+int				check_direction(int delta);
 
 #endif

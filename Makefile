@@ -8,7 +8,7 @@ INCLUDE = -I libs/MLX42/include -I libs/libft -I.
 
 MLXFLAGS = libs/MLX42/build/libmlx42.a -ldl -lglfw -pthread -lm
 
-SRC = fdf.c ft_atoi_hexa.c parsing.c bresenham.c\
+SRC = fdf.c ft_atoi_hexa.c parsing.c bresenham.c isometric.c aux.c\
 
 OBJ = $(SRC:.c=.o)
 
