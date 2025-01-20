@@ -1,7 +1,7 @@
 MAKEFLAGS	= --no-print-directory --silent
 NAME = fdf
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g3 #quitar g3 al entregar
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g3
 RM = rm -rf
 
 INCLUDE = -I libs/MLX42/include -I libs/libft -I.

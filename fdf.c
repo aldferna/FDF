@@ -6,7 +6,7 @@
 /*   By: aldferna <aldferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 16:28:00 by aldferna          #+#    #+#             */
-/*   Updated: 2025/01/15 19:50:25 by aldferna         ###   ########.fr       */
+/*   Updated: 2025/01/17 17:49:17 by aldferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,26 +20,26 @@ void	key_hook(void *param)
 	if (mlx_is_key_down(fdf->mlx, MLX_KEY_ESCAPE))
 		mlx_close_window(fdf->mlx);
 	if (mlx_is_key_down(fdf->mlx, MLX_KEY_UP))
-		fdf->cam_y += 5;
+		fdf->cam_y += 10;
 	if (mlx_is_key_down(fdf->mlx, MLX_KEY_DOWN))
-		fdf->cam_y -= 5;
+		fdf->cam_y -= 10;
 	if (mlx_is_key_down(fdf->mlx, MLX_KEY_LEFT))
-		fdf->cam_x += 5;
+		fdf->cam_x += 10;
 	if (mlx_is_key_down(fdf->mlx, MLX_KEY_RIGHT))
-		fdf->cam_x -= 5;
+		fdf->cam_x -= 10;
 	if (mlx_is_key_down(fdf->mlx, MLX_KEY_0))
-		fdf->change_z -= 5;
+		fdf->hook_z -= 0.3;
 	if (mlx_is_key_down(fdf->mlx, MLX_KEY_1))
-		fdf->change_z += 5;
+		fdf->hook_z += 0.3;
 	isometric(fdf);
 	matrix_to_lines(fdf);
 }
 
 void	zoom_hook(double xdelta, double ydelta, void *param)
 {
-	(void)xdelta;
-	t_fdf *fdf;
+	t_fdf	*fdf;
 
+	(void)xdelta;
 	fdf = (t_fdf *)param;
 	if (ydelta > 0)
 		fdf->zoom *= 1.1;
@@ -55,6 +55,7 @@ int	main(int argc, char **argv)
 
 	if (argc != 2)
 		return (1);
+	ft_memset(&fdf, 0, sizeof(t_fdf));
 	fill_matrix(argv[1], &fdf);
 	fdf.mlx = mlx_init(fdf.win_width, fdf.win_height, "FDF", false);
 	if (!fdf.mlx)
@@ -70,16 +71,3 @@ int	main(int argc, char **argv)
 	mlx_terminate(fdf.mlx);
 	exit(0);
 }
-
-//no pintar linea si los dos puntos fuera
-//no pintar
-
-
-// ok:
-// esta formula da segment fault y no deberia
-// fdf->matrix[y][x].x_iso = posx + fdf->zoom * (x - y) * cos(0.523599);
-// fdf->matrix[y][x].y_iso = posy - fdf->zoom * (x + y) * sin(0.523599) - z;
-
-// poner algun limites al dibujar---q no se salga fuera	-antes de dibujar comprobar
-// el primer calloc en fill_matrix; redimensionar
-// segun tamano del mapa ajustar zoom

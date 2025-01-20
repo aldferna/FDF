@@ -6,7 +6,7 @@
 /*   By: aldferna <aldferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/27 11:51:50 by aldferna          #+#    #+#             */
-/*   Updated: 2025/01/15 18:31:57 by aldferna         ###   ########.fr       */
+/*   Updated: 2025/01/17 17:24:41 by aldferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,10 +77,10 @@ void	process_line(t_fdf *fdf, char *line, int y)
 	}
 }
 
-void resize_matrix(t_fdf *fdf, int *space)
+void	resize_matrix(t_fdf *fdf, int *space)
 {
-	t_node **aux_matrix;
-	int y;
+	t_node	**aux_matrix;
+	int		y;
 
 	aux_matrix = ft_calloc((*space) * 2, sizeof(t_node *));
 	y = 0;
@@ -95,7 +95,7 @@ void resize_matrix(t_fdf *fdf, int *space)
 	write(1, "loading...\n", 12);
 }
 
-void fill_matrix(char *file_name, t_fdf *fdf)
+void	fill_matrix(char *file_name, t_fdf *fdf)
 {
 	int		fd;
 	char	*line;
@@ -103,7 +103,7 @@ void fill_matrix(char *file_name, t_fdf *fdf)
 	int		space;
 
 	fdf->width = 2147483647;
-	fd = fd_open(file_name);	
+	fd = fd_open(file_name);
 	y = 0;
 	space = 100;
 	fdf->matrix = ft_calloc(space, sizeof(t_node *));
@@ -111,7 +111,7 @@ void fill_matrix(char *file_name, t_fdf *fdf)
 	{
 		line = get_next_line(fd);
 		if (line == NULL)
-			break;
+			break ;
 		fdf->height++;
 		if (y == space)
 			resize_matrix(fdf, &space);

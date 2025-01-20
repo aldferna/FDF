@@ -37,6 +37,5 @@ int	ft_atoi(const char *nptr)
 		number = number * 10 + (nptr[i] - 48);
 		i++;
 	}
-	//printf("zen atoi: %i\n", sign*number);
 	return (sign * number);
 }
