@@ -6,15 +6,15 @@
 /*   By: aldferna <aldferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 16:57:43 by aldferna          #+#    #+#             */
-/*   Updated: 2024/12/23 17:43:02 by aldferna         ###   ########.fr       */
+/*   Updated: 2025/01/31 12:56:40 by aldferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFT_H
 # define LIBFT_H
 
-# include <stdlib.h>
 # include "get_next_line.h"
+# include <stdlib.h>
 
 typedef struct s_list
 {
@@ -29,6 +29,7 @@ int					ft_isalpha(int c);
 int					ft_isascii(int c);
 int					ft_isdigit(int c);
 int					ft_isprint(int c);
+int					ft_isspace(int c);
 char				*ft_itoa(int n);
 void				ft_lstadd_back(t_list **lst, t_list *new);
 void				ft_lstadd_front(t_list **lst, t_list *new);

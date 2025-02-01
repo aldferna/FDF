@@ -6,7 +6,7 @@
 /*   By: aldferna <aldferna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/27 11:51:50 by aldferna          #+#    #+#             */
-/*   Updated: 2025/01/17 17:24:41 by aldferna         ###   ########.fr       */
+/*   Updated: 2025/02/01 19:54:22 by aldferna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ char	*fill_node(t_fdf *fdf, char **line, int x, int y)
 		fdf->matrix[y][x].x = x;
 		fdf->matrix[y][x].y = y;
 		fdf->matrix[y][x].z = ft_atoi(*line);
-		fdf->matrix[y][x].color = 0xFF0FF0FF;
+		fdf->matrix[y][x].color = 0x0000FFFF;
 		(*line)++;
 	}
 	while (**line >= '0' && **line <= '9')
@@ -63,7 +63,16 @@ void	process_line(t_fdf *fdf, char *line, int y)
 	int		x;
 	char	*line_aux;
 	int		current_width;
+	int		i;
 
+	i = 0;
+	while (line[i] != '\0')
+	{
+		if (!ft_isalnum(line[i]) && !ft_isspace(line[i]) && line[i] != '-'
+			&& line[i] != ',')
+			exit(1);
+		i++;
+	}
 	current_width = count_width(line);
 	if (current_width < fdf->width)
 		fdf->width = current_width;
