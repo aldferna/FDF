@@ -9,10 +9,8 @@ In this project you will transform a map consisting of numbers (representing the
 It reinforces various programming concepts as file handling, graphics rendering, and user input processing. You learn how to use an external library, reading the documentation and testing it as well as basic mathematical concepts (lineal algebra, trogonometry) and the Bresenham’s line drawing algorithm.  
 
 <p float="left">
-  <img src="https://miro.medium.com/v2/resize:fit:1400/format:webp/0*dt0w0ps7mLeqPG9U.gif" width="300" />
   <img src="https://miro.medium.com/v2/resize:fit:1400/1*l552tTR3_ywont4BRuU3lQ.png" width="300" />
+  <img src="https://miro.medium.com/v2/resize:fit:1400/format:webp/0*dt0w0ps7mLeqPG9U.gif" width="300" />
 </p>
 
-![alt text](https://miro.medium.com/v2/resize:fit:1400/format:webp/0*dt0w0ps7mLeqPG9U.gif)
-![alt text](https://miro.medium.com/v2/resize:fit:1400/1*l552tTR3_ywont4BRuU3lQ.png)
 
