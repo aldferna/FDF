@@ -30,7 +30,7 @@ It reinforces various programming concepts such as file handling, graphics rende
 Use a coma after the Z axis coordenate to specify the color.  
 
 ## Controls
-Use the arrows to move. 
+Use the arrows to move.  
 Use 1 and 0 to increse/decrease the height. 
 
 ![alt text](https://miro.medium.com/v2/resize:fit:916/format:webp/1*1erLSI8XPlNmkhvz0LvFqQ.gif)
